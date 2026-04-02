@@ -6,7 +6,7 @@ from app import database
 from app.config import BACKEND_MQTT_PASS, BACKEND_MQTT_USER
 from app.routers import auth, devices, internal, projects, websockets
 from app.services import mqtt as mqtt_service
-
+from fastapi.middleware.cors import CORSMiddleware 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -66,6 +66,13 @@ app.include_router(devices.router)
 app.include_router(websockets.router)
 app.include_router(internal.router)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/", tags=["Health"])
 async def root():
