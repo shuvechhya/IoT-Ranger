@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
@@ -12,10 +12,9 @@ services:
       - MQTT_BROKER=emqx
       - MQTT_PORT=1883
       - BACKEND_MQTT_USER=backend
-      - BACKEND_MQTT_PASS=backend_secret_pass_123
-      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
-      - WEBHOOK_SECRET=my-webhook-secret-key-123
-      - PORT=3000
+      - BACKEND_MQTT_PASS="Q5F_PX1H7R0`#sk<hXN*yFt!kBJckj"
+      - JWT_SECRET="K^P6*@=Ygn2'Y2hgI2[I3j2/10^v"r/J7}5,5b:"
+      - WEBHOOK_SECRET="Ur8G/T"d%P$JuQ-/9+j[Z3#Co5(QA2<sr)s)FL^"
     networks:
       - iot-net
     depends_on:
