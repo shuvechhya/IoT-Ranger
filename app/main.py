@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from app.services.firebase import init_firebase
 
 from app import database
 from app.config import BACKEND_MQTT_PASS, BACKEND_MQTT_USER
@@ -23,6 +24,8 @@ async def lifespan(app: FastAPI):
         upsert=True,
     )
     print(f"Backend MQTT user ready: {BACKEND_MQTT_USER}")
+
+    init_firebase()
 
     mqtt_service.connect()
 
