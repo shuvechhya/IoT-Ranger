@@ -20,6 +20,8 @@ services:
     depends_on:
       - mongo
       - emqx
+    volumes:
+      - ./serviceAccountKey.json:/app/serviceAccountKey.json:ro
 
   emqx:
     image: emqx/emqx:5.6
