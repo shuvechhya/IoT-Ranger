@@ -1,11 +1,13 @@
 # IoT Platform API Documentation
 
 ## Base URL
+
 ```
-http://YOUR_SERVER:8000
+http://YOUR_SERVER:3000
 ```
 
 ## Authentication
+
 - No authentication required for API calls (internal use)
 - MQTT uses per-device credentials
 
@@ -14,10 +16,13 @@ http://YOUR_SERVER:8000
 ## Endpoints
 
 ### 1. List Organizations
+
 ```http
 GET /organizations
 ```
+
 **Response:**
+
 ```json
 [
   {"id": "org_xxx", "name": "My Org"},
@@ -26,22 +31,28 @@ GET /organizations
 ```
 
 ### 2. Create Organization
+
 ```http
 POST /organizations
 Content-Type: application/json
 
 {"name": "My Organization"}
 ```
+
 **Response:**
+
 ```json
 {"id": "org_xxx", "name": "My Organization"}
 ```
 
 ### 3. List Devices in Organization
+
 ```http
 GET /organizations/{org_id}/devices
 ```
+
 **Response:**
+
 ```json
 [
   {
@@ -54,13 +65,16 @@ GET /organizations/{org_id}/devices
 ```
 
 ### 4. Create Device
+
 ```http
 POST /organizations/{org_id}/devices
 Content-Type: application/json
 
 {"name": "ESP32 Sensor"}
 ```
+
 **Response:**
+
 ```json
 {
   "id": "dev_xxx",
@@ -72,13 +86,16 @@ Content-Type: application/json
 ```
 
 ### 5. MQTT Authentication (Internal)
+
 ```http
 POST /mqtt/auth
 Content-Type: application/x-www-form-urlencoded
 
 username=d_org_xxx_dev_xxx&password=raw_password
 ```
+
 **Response:**
+
 ```json
 {"result": "allow"}  // or {"result": "deny"}
 ```
@@ -88,13 +105,15 @@ username=d_org_xxx_dev_xxx&password=raw_password
 ## WebSocket API
 
 ### Connection
+
 ```javascript
-const ws = new WebSocket('ws://YOUR_SERVER:8000/ws/{org_id}');
+const ws = new WebSocket('ws://YOUR_SERVER:3000/ws/{org_id}');
 ```
 
 ### Server → Client Messages
 
 **1. Initial Device List (on connect)**
+
 ```json
 {
   "type": "init",
@@ -106,6 +125,7 @@ const ws = new WebSocket('ws://YOUR_SERVER:8000/ws/{org_id}');
 ```
 
 **2. Device Online/Offline Status**
+
 ```json
 {
   "type": "device_status",
@@ -115,6 +135,7 @@ const ws = new WebSocket('ws://YOUR_SERVER:8000/ws/{org_id}');
 ```
 
 **3. Device Data Received**
+
 ```json
 {
   "type": "device_data",
@@ -128,15 +149,16 @@ const ws = new WebSocket('ws://YOUR_SERVER:8000/ws/{org_id}');
 
 ## MQTT Configuration for Devices
 
-| Setting | Value |
-|---------|-------|
-| Broker | YOUR_SERVER_IP |
-| Port | 1883 |
-| Username | From device creation response |
-| Password | From device creation response |
+| Setting         | Value                                             |
+| --------------- | ------------------------------------------------- |
+| Broker          | YOUR_SERVER_IP                                    |
+| Port            | 1883                                              |
+| Username        | From device creation response                     |
+| Password        | From device creation response                     |
 | Topic (publish) | `organizations/{org_id}/devices/{device_id}/data` |
 
 ### Example ESP32 Code
+
 ```cpp
 #include <PubSubClient.h>
 
@@ -167,14 +189,15 @@ void loop() {
 
 ## Error Responses
 
-| Status | Meaning |
-|--------|---------|
-| 200 | Success |
-| 404 | Organization/Device not found |
-| 422 | Validation error |
+| Status | Meaning                       |
+| ------ | ----------------------------- |
+| 200    | Success                       |
+| 404    | Organization/Device not found |
+| 422    | Validation error              |
 
 ---
 
 ## Rate Limits
+
 - No rate limits (internal use)
 - Consider adding if exposed publicly

@@ -1,34 +1,34 @@
 {
-  "auth": {
-    "http": {
-      "enable": true,
-      "method": "post",
-      "url": "http://backend:8000/mqtt/auth",
-      "body": [
-        "username=${username}",
-        "password=${password}",
-        "clientid=${clientid}"
-      ],
-      "headers": {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      "pool_size": 8,
-      "pool_type": "random",
-      "connect_timeout": "5s",
-      "request_timeout": "5s",
-      "enable_pipelining": true,
-      "retry_interval": "1s",
-      "failed_sleep_period1": "1s",
-      "failed_sleep_period2": "2s",
-      "mechanism": "password_based",
-      "backend": "http"
-    }
-  },
-  "authorization": {
-    "sources": [],
-    "no_match": "allow",
-    "cache": {
-      "enable": false
-    }
-  }
+	"auth": {
+		"http": {
+			"enable": true,
+			"method": "post",
+			"url": "http://backend:3000/mqtt/auth",
+			"body": [
+				"username=${username}",
+				"password=${password}",
+				"clientid=${clientid}"
+			],
+			"headers": {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			"pool_size": 8,
+			"pool_type": "random",
+			"connect_timeout": "5s",
+			"request_timeout": "5s",
+			"enable_pipelining": true,
+			"retry_interval": "1s",
+			"failed_sleep_period1": "1s",
+			"failed_sleep_period2": "2s",
+			"mechanism": "password_based",
+			"backend": "http"
+		}
+	},
+	"authorization": {
+		"sources": [],
+		"no_match": "allow",
+		"cache": {
+			"enable": false
+		}
+	}
 }

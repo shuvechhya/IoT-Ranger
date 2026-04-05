@@ -10,7 +10,7 @@ async def websocket_endpoint(websocket: WebSocket, project_id: str):
     """
     Real-time device status updates for a project.
 
-    Connect via: `ws://localhost:8000/ws/{project_id}`
+    Connect via: `ws://localhost:3000/ws/{project_id}`
 
     Message types:
     - **init**: initial device list with current status

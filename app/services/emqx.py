@@ -23,7 +23,7 @@ def setup_emqx():
             "mechanism": "password_based",
             "backend": "http",
             "method": "post",
-            "url": "http://backend:8000/mqtt/auth",
+            "url": "http://backend:3000/mqtt/auth",
             "headers": {"Content-Type": "application/json"},
             "body": {"username": "${username}", "password": "${password}"},
             "enable": True,
@@ -42,7 +42,7 @@ def setup_emqx():
         connector_data = {
             "name": "http_webhook_connector",
             "type": "webhook",
-            "server": "http://backend:8000",
+            "server": "http://backend:3000",
             "headers": {
                 "Content-Type": "application/json",
                 "X-Webhook-Secret": WEBHOOK_SECRET,
@@ -74,7 +74,7 @@ def setup_emqx():
                 "function": "webhook",
                 "args": {
                     "connector": "http_webhook_connector",
-                    "url": "http://backend:8000/webhook/emqx/events",
+                    "url": "http://backend:3000/webhook/emqx/events",
                     "method": "post",
                     "body": {
                         "event": "${event}",
