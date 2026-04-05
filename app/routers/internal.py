@@ -34,6 +34,9 @@ async def mqtt_auth(request: Request):
         username = data.get("username")
         password = data.get("password")
 
+        print(f"Auth attempt - Username: {username}, Password: {'***' if password else None}")	
+        print(f"Auth data: {data}")
+
         if not username or not password:
             return {"result": "deny"}
 
