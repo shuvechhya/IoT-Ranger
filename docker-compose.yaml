@@ -1,20 +1,12 @@
-version: "3.8"
-
 services:
   backend:
-    build: .
-    ports: ["3000:3000"]
-    environment:
-      - MONGO_URL=mongodb://mongo:27017
-      - EMQX_API_URL=http://emqx:9095
-      - EMQX_USER=admin
-      - EMQX_PASS=public
-      - MQTT_BROKER=emqx
-      - MQTT_PORT=1883
-      - BACKEND_MQTT_USER=backend
-      - BACKEND_MQTT_PASS="Q5F_PX1H7R0`#sk<hXN*yFt!kBJckj"
-      - JWT_SECRET="K^P6*@=Ygn2'Y2hgI2[I3j2/10^v"r/J7}5,5b:"
-      - WEBHOOK_SECRET="Ur8G/T"d%P$JuQ-/9+j[Z3#Co5(QA2<sr)s)FL^"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
     networks:
       - iot-net
     depends_on:
@@ -22,12 +14,45 @@ services:
       - emqx
     volumes:
       - ./serviceAccountKey.json:/app/serviceAccountKey.json:ro
+    restart: unless-stopped
+
+  admin-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/iot_logs
+    networks:
+      - iot-net
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - iot-net
+    depends_on:
+      - backend
+    restart: unless-stopped
 
   emqx:
     image: emqx/emqx:5.6
-    ports: ["1883:1883", "8083:8083", "9095:9095", "9096:9096", "18083:18083"]
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "9095:9095"
+      - "18083:18083"
     volumes:
       - ./emqx.conf:/opt/emqx/etc/emqx.conf:ro
+      - emqx-data:/opt/emqx/data
     environment:
       - EMQX_NAME=emqx
       - EMQX_HOST=0.0.0.0
@@ -35,21 +60,60 @@ services:
       - EMQX_DASHBOARD__DEFAULT_USER__PASSWORD=public
     networks:
       - iot-net
+    restart: unless-stopped
 
   mongo:
     image: mongo:4.4
-    ports: ["28017:27017"]
-    networks:
-      - iot-net
-
-  frontend:
-    image: nginx:alpine
-    ports: ["3100:80"]
+    ports:
+      - "28017:27017"
     volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+      - mongo-data:/data/db
     networks:
       - iot-net
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - "8086:8086"
+    volumes:
+      - influx-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpassword123
+      - DOCKER_INFLUXDB_INIT_ORG=Ioterra
+      - DOCKER_INFLUXDB_INIT_BUCKET=Ioterra
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=w1iwVOXxAtimRLKKyoOXz_jIK3ru8arflF-wmgCiebkdmwkD5jlxbOv8uwLAQ69qCGO8KdKFdZ9mZCxshbolPA==
+    networks:
+      - iot-net
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3100:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - iot-net
+    depends_on:
+      - mongo
+      - influxdb
+      - admin-api
+    restart: unless-stopped
 
 networks:
   iot-net:
     driver: bridge
+
+volumes:
+  mongo-data:
+  emqx-data:
+  influx-data:
+  grafana-data:
